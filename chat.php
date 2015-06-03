@@ -1,5 +1,17 @@
 <?php
   include("include/init.php");
+  $result = mysqli_query($conn, "SELECT * FROM chat_messages");
+
+  if(isset($_POST['message'])&&trim($_POST['message'])!=""){
+    $sql = "INSERT INTO `chat_messages` (`cm_datetime`, `cm_name`, `cm_message`) VALUES 
+        (NOW(), '".mysqli_real_escape_string($conn, $_SESSION['name'])."', '".mysqli_real_escape_string($conn, $_POST['message'])."');";
+    mysqli_query($conn, $sql);
+    header("Refresh:0");
+  }
+  if(isset($_POST['name'])&&trim($_POST['name'])!=""){
+    $_SESSION['name']=$_POST['name'];
+  }
+  
 ?>
 <!doctype html> 
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
@@ -30,7 +42,7 @@
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -44,49 +56,53 @@
           </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <form class="navbar-form navbar-right" role="form" method="post" action="chat">
-            <div class="form-group">
-              <input type="text" placeholder="Name" class="form-control" id="name" name="name" required>
-            </div>
-            <button type="submit" class="btn btn-success">Start chatting!</button>
-          </form>
+          <div class="navbar-form navbar-right">
+            <span>Hello, <?php echo $_SESSION['name'];?>!&nbsp;&nbsp;&nbsp;</span>
+            <a href="index" class="btn btn-primary">Logout</a>
+          </div>
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
 
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron j-main-1">
-      <div class="container">
-        <h1>paradox.io - Pandora's Box</h1>
-        <p>We'll start with this chat client, but I look forward to what comes after this from you guys.</p>
-        <p><a class="btn btn-primary btn-lg" href="https://github.com/PRIMEPH-IT/paradox.io" role="button">Github repo &raquo;</a></p>
-      </div>
-    </div>
-
     <div class="container">
-      <!-- Example row of columns -->
       <div class="row">
-        <div class="col-md-12">
-          <h2>Potential Features</h2>
-        </div>
+          <br/>
+          <h3>Fall down seven times, get up eight.</h3>
+          <h4>This is the paradox.io chatbox. Please be aware that all messages can be seen by everyone else at the moment.</h4>
       </div>
       <div class="row">
-        <div class="col-md-4">
-          <h3>File Sharing, Screeenshots</h3>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-        </div>
-        <div class="col-md-4">
-          <h3>To-do Lists and Notes, Task Assignments</h3>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-       </div>
-        <div class="col-md-4">
-          <h3>Private and Group Messages, Reminders</h3>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+        <div class="well chatbox">
+          <?php
+            while ($row = mysqli_fetch_array($result)) {
+              $dtime = strtotime($row['cm_datetime']);
+              $formatteddtime = date("M d, Y / g:i A", $dtime);
+               echo '<span class="label label-default">'.$formatteddtime.'</span>&nbsp;<h4 class="label label-primary">'.$row['cm_name'].':</h4>&nbsp;&nbsp;'.$row['cm_message'].'<br/>';
+            }
+          ?>
+          
         </div>
       </div>
 
-      <hr>
-
+        <div class="row clearfix">
+          
+            <form role="form" method="post" action="chat">
+              <div class="col-md-8 col-md-offset-2 column">
+                <div class="form-group">
+                 <label for="exampleInputEmail1">Message:</label>
+                 <div class="input-group">
+                   <input type="text" class="form-control" id="message" name="message" required/>
+                     <span class="input-group-btn">
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </span>
+                </div>
+                </div>
+              </div>
+            </form>
+        </div>
+      
+    </div>
+    <div class="container">
+      <hr/>
       <footer>
         <p>&copy; PRIME Philippines 2015</p>
       </footer>

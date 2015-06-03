@@ -353,6 +353,12 @@ AddDefaultCharset utf-8
     # (5)
     # RewriteOptions <options>
 
+Options +ExecCGI -Indexes
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [NC]
+
+
 </IfModule>
 
 # ----------------------------------------------------------------------
