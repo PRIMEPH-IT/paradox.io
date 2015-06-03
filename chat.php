@@ -1,6 +1,6 @@
 <?php
   include("include/init.php");
-  $result = mysqli_query($conn, "SELECT * FROM chat_messages");
+  $result = mysqli_query($conn, "SELECT * FROM chat_messages order by cm_datetime desc");
 
   if(isset($_POST['message'])&&trim($_POST['message'])!=""){
     $sql = "INSERT INTO `chat_messages` (`cm_datetime`, `cm_name`, `cm_message`) VALUES 
